@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>القاموس الذكي</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; text-align: right; background-color: #f4f4f4; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { background-color: #5c67f2; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #4a54e1; }
+        .result { margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>القاموس الذكي</h1>
+        <input type="text" id="wordInput" placeholder="أدخل الكلمة">
+        <input type="text" id="meaningInput" placeholder="أدخل المعنى">
+        <input type="text" id="exampleInput" placeholder="أدخل المثال">
+        <button onclick="saveWord()">إضافة كلمة</button>
+        <hr>
+        <input type="text" id="searchInput" placeholder="ابحث عن كلمة">
+        <button onclick="searchWord()">بحث</button>
+        <div id="resultArea" class="result"></div>
+    </div>
+
+    <script>
+        function saveWord() {
+            const word = document.getElementById('wordInput').value.trim().toLowerCase();
+            const meaning = document.getElementById('meaningInput').value.trim();
+            const example = document.getElementById('exampleInput').value.trim();
+
+            if (!word || !meaning || !example) {
+                alert('الرجاء تعبئة جميع الحقول.');
+                return;
+            }
+
+            let dictionary = JSON.parse(localStorage.getItem('smart_dictionary')) || {};
+            if (dictionary[word]) {
+                alert('الكلمة موجودة مسبقاً.');
+                return;
+            }
+
+            dictionary[word] = { meaning, example };
+            localStorage.setItem('smart_dictionary', JSON.stringify(dictionary));
+            alert('تمت إضافة الكلمة بنجاح!');
+            document.getElementById('wordInput').value = '';
+            document.getElementById('meaningInput').value = '';
+            document.getElementById('exampleInput').value = '';
+        }
+
+        function searchWord() {
+            const searchWord = document.getElementById('searchInput').value.trim().toLowerCase();
+            const dictionary = JSON.parse(localStorage.getItem('smart_dictionary')) || {};
+            const resultArea = document.getElementById('resultArea');
+
+            if (dictionary[searchWord]) {
+                resultArea.innerHTML = `<strong>الكلمة:</strong> ${searchWord}<br><strong>المعنى:</strong> ${dictionary[searchWord].meaning}<br><strong>المثال:</strong> ${dictionary[searchWord].example}`;
+            } else {
+                resultArea.innerHTML = 'الكلمة غير موجودة.';
+            }
+        }
+    </script>
+</body>
+</html>
